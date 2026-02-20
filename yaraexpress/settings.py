@@ -23,16 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5k=qz%(1&a8k=j#bl!w7fz3lq%qp5nars%7v9mm&45_&ghpaj0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://yaraexpress.loca.lt",
-    "https://*.loca.lt",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
 
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
