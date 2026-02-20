@@ -6,6 +6,7 @@ whitenoise==6.7.0
 psycopg2-binary==2.9.11
 requests==2.31.0
 django-environ==0.13.0
+dj-database-url==2.1.0
 Pillow==12.1.1 --only-binary :all:
 
 # Optional (only if you use PostgreSQL in production)
