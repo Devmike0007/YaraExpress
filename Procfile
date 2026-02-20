@@ -1,1 +1,1 @@
-web: gunicorn yaraexpress.wsgi
+web: python manage.py collectstatic --noinput && gunicorn yaraexpress.wsgi
