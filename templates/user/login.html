@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion | Yara</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/user.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="{% static 'img/logos2.png' %}" alt="Logo Yara">
+    </div>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <ul id="nav-menu">
+        <!-- <li><a href="{% url 'home' %}">Accueil</a></li> -->
+        <li><a href="{% url 'home' %}">Boutique</a></li>
+        <li><a href="{% url 'about' %}">À propos</a></li>
+    </ul>
+</header>
+
+<main class="container">
+    <div class="img">
+        <a href="{% url 'home' %}"><img src="{% static 'user/img/back-1689836_1920.png' %}" alt=""></a>
+    </div>
+    <div class="user_section">
+        <h1>Connexion</h1>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form class="user_form" method="post">
+            {% csrf_token %}
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" placeholder="Votre nom d'utilisateur" required>
+
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+            
+            <button type="submit">Se connecter</button>
+            <p>Pas de compte ? <a href="{% url 'register' %}">Créer un compte</a></p>
+        </form>
+    </div>
+</main>
+
+<script>
+    // Hamburger Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    // Fermer le menu quand on clique sur un lien
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+</script>
+
+</body>
+</html>

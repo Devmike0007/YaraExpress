@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Profil | Yara</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/EditProfile.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="{% static 'img/logos2.png' %}" alt="Logo Yara">
+    </div>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <ul id="nav-menu">
+        <!-- <li><a href="{% url 'home' %}">Accueil</a></li> -->
+        <li><a href="{% url 'home' %}">Boutique</a></li>
+        <li><a href="{% url 'about' %}">À propos</a></li>
+    </ul>
+</header>
+
+<main class="container">
+    <div class="conteneurg">
+
+    </div>
+    <div class="user_section">
+        <h1>Modifier mes informations</h1>
+        <form class="user_form">
+            <label for="name">Nom :</label>
+            <input type="text" id="name" value="Michel" required>
+
+            <label for="email">Email :</label>
+            <input type="email" id="email" value="michel@example.com" required>
+
+            <label for="phone">Téléphone :</label>
+            <input type="text" id="phone" value="+243 000 000 000" required>
+
+            <label for="address">Adresse :</label>
+            <input type="text" id="address" value="Kinshasa, RDC" required>
+
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" placeholder="Nouveau mot de passe">
+            <div class="bouton">
+                <a href="user.html" class="bnt">Annuler</a>
+                <button type="submit" class="bnt" >Enregistrer</button>
+
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    // Hamburger Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    // Fermer le menu quand on clique sur un lien
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+</script>
+
+</body>
+</html>

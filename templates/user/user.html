@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil | Yara</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="{% static 'img/logos2.png' %}" alt="Logo Yara">
+    </div>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <ul id="nav-menu">
+        <!-- <li><a href="{% url 'home' %}">Accueil</a></li> -->
+        <li><a href="{% url 'home' %}">Boutique</a></li>
+        <li><a href="{% url 'about' %}">À propos</a></li>
+    </ul>
+    <div class="parametre">
+         <a href="{% url 'panier' %}"><img src="{% static 'img/shopping.png' %}" alt=""></a>
+
+        <a href="{% url 'recherche' %}"><img src="{% static 'img/search.png' %}" alt="Recherche"></a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="Avatar" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+                    {% else %}
+                        <img src="{% static 'img/utilisateur.png' %}" alt="Utilisateur">
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}"><img src="{% static 'img/utilisateur.png' %}" alt="Connexion"></a>
+            {% endif %}
+    </div>
+</header>
+
+<main class="container profile-container">
+    <!-- SECTION PROFIL AVEC PHOTO -->
+    <div class="profile_card">
+        <div class="profile_header">
+            <div class="photo_section">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="Photo de profil" class="profile_photo" id="previewPhoto">
+                {% else %}
+                    <img src="{% static 'img/default-avatar.png' %}" alt="Photo par défaut" class="profile_photo" id="previewPhoto">
+                {% endif %}
+                <label for="photoInput" class="upload_btn">
+                    <span>📷 Changer</span>
+                </label>
+            </div>
+
+            <div class="profile_texts">
+                <h1>{{ user.first_name|default:user.username }}</h1>
+                {% if profile.bio %}
+                    <p class="bio">{{ profile.bio }}</p>
+                {% else %}
+                    <p class="bio-placeholder">Pas encore de bio...</p>
+                {% endif %}
+                <p class="username">@{{ user.username }}</p>
+                <p class="member-since">Membre depuis {{ user.date_joined|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE D'ÉDITION -->
+        <div class="edit_profile_section">
+            <h2>Modifier mon profil</h2>
+            <form method="post" enctype="multipart/form-data" class="profile_form">
+                {% csrf_token %}
+                
+                <div class="form_group">
+                    <label for="id_first_name">Prénom</label>
+                    {{ user_form.first_name }}
+                </div>
+
+                <div class="form_group">
+                    <label for="id_last_name">Nom</label>
+                    {{ user_form.last_name }}
+                </div>
+
+                <div class="form_group">
+                    <label for="id_email">Email</label>
+                    {{ user_form.email }}
+                </div>
+
+                <div class="form_group">
+                    <label for="id_bio">Biographie</label>
+                    {{ profile_form.bio }}
+                </div>
+
+                <div class="form_group hidden">
+                    <label for="photoInput">Photo de profil</label>
+                    {{ profile_form.photo }}
+                </div>
+
+                <div class="form_actions">
+                    <button type="submit" class="btn-save">💾 Enregistrer modifications</button>
+                    <a href="{% url 'home' %}" class="btn-cancel">Annuler</a>
+                </div>
+            </form>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- SECTION COMMANDES -->
+    <div class="orders_section">
+        <h2>Historique des commandes</h2>
+        {% if orders %}
+            <table class="orders_table">
+                <thead>
+                    <tr>
+                        <th>Commande</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            <td class="status-{{ order.status }}">{{ order.get_status_display }}</td>
+                            <td>{{ order.total_price }} $</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-orders">
+                <p>Vous n'avez pas encore de commandes.</p>
+                <a href="{% url 'home' %}" class="btn-shop">Commencer vos achats</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- BOUTON DÉCONNEXION -->
+    <div class="logout_section">
+        <a href="{% url 'logout' %}" class="btn-logout">Se déconnecter</a>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-services">
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Yara Express. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<script>
+    // Prévisualisation de la photo avant l'upload
+    document.getElementById('photoInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('previewPhoto').src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</body>
+</html>

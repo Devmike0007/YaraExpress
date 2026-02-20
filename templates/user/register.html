@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription | Yara</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/register.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="{% static 'img/logos2.png' %}" alt="Logo Yara">
+    </div>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <ul id="nav-menu">
+        <!-- <li><a href="{% url 'home' %}">Accueil</a></li> -->
+        <li><a href="{% url 'home' %}">Boutique</a></li>
+        <li><a href="{% url 'about' %}">À propos</a></li>
+    </ul>
+</header>
+
+<main class="container">
+    <div class="img">
+        <a href="{% url 'home' %}"><img src="{% static 'user/img/back-1689836_1920.png' %}" alt="Retour"></a>
+    </div>
+
+    <div class="user_section">
+        <h1>Inscription</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form class="user_form" method="post" novalidate>
+            {% csrf_token %}
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" placeholder="Votre nom d'utilisateur" value="{{ form.username.value|default:'' }}" required>
+            {% if form.username.errors %}
+                <div class="error-messages">
+                    {% for error in form.username.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" placeholder="Votre email" value="{{ form.email.value|default:'' }}" required>
+            {% if form.email.errors %}
+                <div class="error-messages">
+                    {% for error in form.email.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+
+            <label for="first_name">Nom complet :</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Votre nom complet" value="{{ form.first_name.value|default:'' }}">
+            {% if form.first_name.errors %}
+                <div class="error-messages">
+                    {% for error in form.first_name.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+
+            <label for="password1">Mot de passe :</label>
+            <input type="password" id="password1" name="password1" placeholder="Créer un mot de passe (min 8 caractères, pas entièrement numérique)" required>
+            {% if form.password1.errors %}
+                <div class="error-messages">
+                    {% for error in form.password1.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+            <small class="help-text">Le mot de passe doit contenir au moins 8 caractères, des lettres et des chiffres.</small>
+
+            <label for="password2">Confirmer le mot de passe :</label>
+            <input type="password" id="password2" name="password2" placeholder="Confirmer le mot de passe" required>
+            {% if form.password2.errors %}
+                <div class="error-messages">
+                    {% for error in form.password2.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+
+            <button type="submit">Créer un compte</button>
+
+            <p>Déjà un compte ? <a href="{% url 'login' %}">Se connecter</a></p>
+        </form>
+    </div>
+</main>
+
+<style>
+    .error-messages {
+        margin-top: 5px;
+    }
+    .error-messages .error {
+        display: block;
+        color: #dc3545;
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+    .help-text {
+        display: block;
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
+
+<script>
+    // Hamburger Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    // Fermer le menu quand on clique sur un lien
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+</script>
+
+</body>
+</html>

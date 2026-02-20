@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <div class="module">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <p class="submit-row">
+        <input type="submit" value="Importer" class="default">
+        <a href=".." class="button">Retour</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

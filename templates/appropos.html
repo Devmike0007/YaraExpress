@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/styleapropos.css' %}">
+
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{% static 'img/logos2.png' %}" alt="Logo Yara">
+    </div>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <ul id="nav-menu">
+        <!-- <li><a href="{% url 'home' %}">Accueil</a></li> -->
+        <li><a href="{% url 'home' %}">Boutique</a></li>
+        <li><a href="{% url 'about' %}">À propos</a></li>
+    </ul>
+    <div class="parametre">
+         <a href="{% url 'panier' %}"><img src="{% static 'img/shopping.png' %}" alt=""></a>
+
+        <a href="{% url 'recherche' %}"><img src="{% static 'img/search.png' %}" alt="Recherche"></a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="Avatar" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+                    {% else %}
+                        <img src="{% static 'img/utilisateur.png' %}" alt="Utilisateur">
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}"><img src="{% static 'img/utilisateur.png' %}" alt="Connexion"></a>
+            {% endif %}
+    </div>
+</header>
+    <section class="bannier">
+
+    </section>
+
+     <section class="aproposs">
+       <div class="apropos">
+    <h2>Présentation du projet</h2>
+    <p>
+        Le projet <strong>« Les conditionnements des produits fermiers de Yara Express »</strong>, 
+        en partenariat avec la <strong>Ferme de l’UCC</strong>, vise à optimiser le conditionnement des produits fermiers 
+        pour garantir leur <strong>conservation, leur hygiène</strong> et leur <strong>attractivité</strong> sur le marché kinois.
+    </p>
+        </div>
+
+        <div class="apropos">
+            <h2>À propos de Yara Express</h2>
+            <p>
+                Yara Express est une entreprise spécialisée dans la <strong>transformation et la commercialisation de produits agricoles</strong>, 
+                notamment les <strong>feuilles de manioc prêtes à cuisiner, à préparer ou déjà assaisonnées</strong>. 
+                Elle rend accessible le meilleur du terroir directement chez vous grâce à une plateforme moderne, intuitive et sécurisée.
+            </p>
+            <p>
+                Sur notre site, vous pouvez créer votre profil, laisser des avis, discuter avec l’administrateur, profiter de réductions exclusives 
+                et composer des commandes spéciales en choisissant vos ingrédients préférés. Chaque ingrédient a sa valeur, et vous êtes libre 
+                de personnaliser vos achats selon vos envies.
+            </p>
+        </div>
+
+        <div class="apropos">
+            <h2>Présentation de la cheffe d’équipe</h2>
+            <p>
+                La cheffe d’équipe, étudiante à l’<strong>Université Catholique du Congo</strong> et initiatrice du projet Yara Express, 
+                coordonne chaque étape grâce à son expertise en <strong>gestion de projet et conception de sites e-commerce</strong>. 
+                Elle assure la planification technique et la mise en place des fonctionnalités clés : création de profils clients, gestion des commandes 
+                spéciales, intégration des avis et réduction, garantissant une expérience utilisateur optimale.
+            </p>
+        </div>
+
+        <div class="apropos">
+            <h2>L’équipe Yara Express</h2>
+            <p>
+                L’équipe est composée de jeunes étudiants dynamiques de l’UCC, travaillant ensemble pour le succès du projet. 
+                Chaque membre intervient dans : <strong>la recherche sur le conditionnement, la transformation des produits, l’emballage, la commercialisation</strong> 
+                et <strong>le service client</strong>. L’équipe œuvre avec collaboration, discipline et professionnalisme pour répondre aux exigences 
+                académiques et commerciales, tout en offrant une expérience de qualité aux consommateurs.
+            </p>
+        </div>
+
+        <div class="photos">
+            <img src="{% static 'img/img3.png' %}" alt="Équipe Yara Express" />
+        </div>
+     </section>
+    <footer class="footer">
+        <!-- Section services / avantages -->
+        <div class="footer-services">
+            <div class="service">
+                <div class="titre">
+                    <img src="{% static 'img/delivery-man.png' %}" alt="">
+                    <h3>Livraison rapide</h3>
+                </div>
+                <p>Nous assurons une livraison rapide et fiable à domicile, afin que vos produits arrivent frais et bien conservés.</p>
+                <div class="bas">
+                    <div class="bas_badge">
+                        <img src="{% static 'img/delivery-man.png' %}" alt="">
+                        <span>Livraison disponible à Kinshasa</span>
+                    </div>
+                    <div class="bas_badge">
+                        <img src="{% static 'img/map-location-track.png' %}" alt="">
+                        <span>Délais courts selon votre zone</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service">
+                <div class="titre">
+                    <img src="{% static 'img/approved.png' %}" alt="">
+                    <h3>Support client</h3>
+                </div>
+                <p>Une question ? Une commande ? Notre équipe est disponible via WhatsApp pour :</p>
+                <ul>
+                    <li>vous conseiller</li>
+                    <li>suivre votre commande</li>
+                    <li>répondre rapidement à vos besoins</li>
+                </ul>
+            </div>
+
+            <div class="service">
+                <div class="titre">
+                    <img src="{% static 'img/approved.png' %}" alt="">
+                    <h3>Qualité garantie</h3>
+                </div>
+                <p>Tous nos produits sont :</p>
+                <ul>
+                    <li>soigneusement sélectionnés</li>
+                    <li>transformés selon des procédures modernes</li>
+                    <li>contrôlés pour garantir goût, fraîcheur et sécurité alimentaire</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section informations principales -->
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>À propos de Yara Express</h3>
+                <p>
+                    Yara Express propose des produits fermiers de qualité, transformés et prêts à consommer, 
+                    directement du terroir à votre table. Nous valorisons les produits locaux et offrons une expérience pratique et saine.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Liens utiles</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Accueil</a></li>
+                    <li><a href="{% url 'home' %}">Boutique</a></li>
+                    <li><a href="{% url 'about' %}">À propos</a></li>
+                    <li><a href="user/login.html">Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email : contact@yaraexpress.com</p>
+                <p>Téléphone : +243 99 000 0000</p>
+                <p>Adresse : Kinshasa, RDC</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <a href="https://devmike0007.github.io/mon_site_web/"><p>&copy; 2026 Yara Express. Tous droits réservés.</p></a>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Fermer le menu quand on clique sur un lien
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

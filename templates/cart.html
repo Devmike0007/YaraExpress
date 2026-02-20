@@ -1,0 +1,300 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier | Yara</title>
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% include 'pwa_head.html' %}
+
+</head>
+<body>
+    <!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="{% static 'img/logos2.png' %}" alt="Logo Yara">
+    </div>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <ul id="nav-menu">
+        <!-- <li><a href="{% url 'home' %}">Accueil</a></li> -->
+        <li><a href="{% url 'home' %}">Boutique</a></li>
+        <li><a href="{% url 'about' %}">À propos</a></li>
+    </ul>
+    <div class="parametre">
+         <a href="{% url 'panier' %}"><img src="{% static 'img/shopping.png' %}" alt=""></a>
+
+        <a href="{% url 'recherche' %}"><img src="{% static 'img/search.png' %}" alt="Recherche"></a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="Avatar" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+                    {% else %}
+                        <img src="{% static 'img/utilisateur.png' %}" alt="Utilisateur">
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}"><img src="{% static 'img/utilisateur.png' %}" alt="Connexion"></a>
+            {% endif %}
+    </div>
+</header>
+    <!-- SECTION PANIER -->
+    <main class="container">
+        <h1>Votre panier</h1>
+        <div class="contg">
+            {% if items %}
+                <div class="tableau">
+                    <table class="panier_table" id="panierTable">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Quantité</th>
+                            <th>Ingrédients</th>
+                            <th>Total</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr data-item-id="{{ item.id }}" data-prix="{{ item.product.prix }}" data-ingredients="[{% for ing in item.ingredients.all %}{{ ing.id }}{% if not forloop.last %},{% endif %}{% endfor %}]">
+                                <td>
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.titre }}" style="max-width: 100px;">
+                                    {% else %}
+                                        <img src="{% static 'img/placeholder.png' %}" alt="Non disponible" style="max-width: 100px;">
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.product.titre }}</td>
+                                <td>{{ item.product.prix }} $</td>
+                                <td>
+                                    <form method="post" action="{% url 'mettre_a_jour_panier' item.id %}" class="qty-form">
+                                        {% csrf_token %}
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="qty" data-item-id="{{ item.id }}">
+                                    </form>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn-ingredients" data-item-id="{{ item.id }}" data-action-url="{% url 'add_ingredients_to_item' item.id %}" onclick="openIngredientsModal({{ item.id }})" style="background:#28a745;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:600;">
+                                        🧂 {% if item.ingredients.exists %}{{ item.ingredients.count }}{% endif %}
+                                    </button>
+                                </td>
+                                <td class="totalLigne">{{ item.get_total_price }} $</td>
+                                <td>
+                                    <form method="post" action="{% url 'supprimer_du_panier' item.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="supprimer">X</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="total_panier">
+                    <h2>Total : <span id="totalPanier">{{ total_price }}</span> $</h2>
+                    <button id="waBtn" class="btn" style="margin-left: 10px; background:#25d366;">Commander via WhatsApp</button>
+                    <a href="{% url 'vider_panier' %}" class="btn-secondary" style="margin-left: 10px;">Vider le panier</a>
+                </div>
+
+                <div style="margin-top:12px; width:100%; display:flex; gap:12px; align-items:flex-start;">
+                    <label for="orderNote" style="font-weight:600;">Note (optionnelle):</label>
+                    <textarea id="orderNote" placeholder="Ex: Livraison après 17h, laisser chez le voisin" style="flex:1;min-height:48px;padding:8px;border-radius:8px;border:1px solid #ddd"></textarea>
+                </div>
+                </div>
+
+            {% else %}
+        </div>
+            <div class="empty-cart">
+                <p>Votre panier est vide.</p>
+                <a href="{% url 'home' %}" class="btn">Continuer vos achats</a>
+            </div>
+        {% endif %}
+    </main>
+
+    <!-- MODAL Ingrédients -->
+    <div id="ingredientsModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;">
+        <div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;">
+            <h2 style="margin-bottom:20px;">Sélectionner les ingrédients</h2>
+            
+            <form id="ingredientsForm" method="POST" style="display:flex;flex-direction:column;">
+                {% csrf_token %}
+                <div id="ingredientsList" style="max-height:400px;overflow-y:auto;margin-bottom:20px;border:1px solid #e0e0e0;border-radius:8px;padding:12px;">
+                    {% if all_ingredients %}
+                        {% for ing in all_ingredients %}
+                            <div style="display:flex;align-items:center;padding:10px;border-bottom:1px solid #f0f0f0;">
+                                <input type="checkbox" name="ingredient_ids" value="{{ ing.id }}" id="ing_{{ ing.id }}" style="margin-right:12px;cursor:pointer;">
+                                <label for="ing_{{ ing.id }}" style="flex:1;cursor:pointer;margin:0;">{{ ing.nom }}</label>
+                                <span style="font-weight:600;color:#28a745;">+{{ ing.prix }} $</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align:center;color:#999;">Aucun ingrédient disponible</p>
+                    {% endif %}
+                </div>
+                
+                <div id="totalIngredients" style="background:#f8f9fa;padding:12px;border-radius:8px;margin-bottom:20px;text-align:center;font-weight:600;color:#28a745;">
+                    Supplémentaire: 0.00 $
+                </div>
+                
+                <div style="display:flex;gap:12px;justify-content:flex-end;">
+                    <button type="button" onclick="closeIngredientsModal()" class="btn-secondary" style="background:#6c757d;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:600;">Annuler</button>
+                    <button type="submit" class="btn" style="background:#28a745;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:600;">✓ Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- SCRIPT pour WhatsApp et gestion des ingrédients -->
+    <script>
+        let currentItemId = null;
+        let allIngredientsData = {};
+
+        // Charger les données des ingrédients au démarrage
+        function initIngredientsData() {
+            document.querySelectorAll('input[name="ingredient_ids"]').forEach(cb => {
+                allIngredientsData[cb.value] = {
+                    id: cb.value,
+                    label: cb.nextElementSibling.textContent,
+                    price: parseFloat(cb.nextElementSibling.nextElementSibling.textContent.replace('+', '').replace(' $', ''))
+                };
+            });
+        }
+
+        // Calculer le total des ingrédients
+        function updateIngredientsTotal() {
+            let total = 0;
+            document.querySelectorAll('input[name="ingredient_ids"]:checked').forEach(cb => {
+                const ingData = allIngredientsData[cb.value];
+                if (ingData) total += ingData.price;
+            });
+            const totalDisplay = document.getElementById('totalIngredients');
+            if (totalDisplay) {
+                totalDisplay.textContent = `Supplémentaire: ${total.toFixed(2)} $`;
+            }
+        }
+
+        // Ouvrir la modal d'ingrédients
+        function openIngredientsModal(itemId) {
+            currentItemId = itemId;
+            const modal = document.getElementById('ingredientsModal');
+            const form = document.getElementById('ingredientsForm');
+            
+            // Récupérer le bouton qui a déclenché l'ouverture
+            const button = document.querySelector(`button[data-item-id="${itemId}"]`);
+            const actionUrl = button ? button.getAttribute('data-action-url') : null;
+            
+            if (!actionUrl) {
+                console.error('URL d\'action introuvable pour l\'item', itemId);
+                return;
+            }
+            
+            // Réinitialiser les checkboxes
+            document.querySelectorAll('input[name="ingredient_ids"]').forEach(cb => {
+                cb.checked = false;
+                cb.addEventListener('change', updateIngredientsTotal);
+            });
+            
+            // Récupérer les ingrédients actuels de cet item
+            const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
+            if (row && row.dataset.ingredients) {
+                try {
+                    const ingredientStr = row.dataset.ingredients.replace(/\s/g, '');
+                    if (ingredientStr.length > 2) {  // Vérifier que les [] ne sont pas vides
+                        const currentIngredients = JSON.parse(ingredientStr);
+                        if (Array.isArray(currentIngredients)) {
+                            currentIngredients.forEach(ingId => {
+                                if (ingId) {
+                                    const cb = document.getElementById(`ing_${ingId}`);
+                                    if (cb) {
+                                        cb.checked = true;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Erreur parsing ingrédients:', e);
+                }
+            }
+            
+            // Utiliser l'URL générée par Django via le data-attribut
+            form.action = actionUrl;
+            
+            updateIngredientsTotal();
+            modal.style.display = 'flex';
+        }
+
+        function closeIngredientsModal() {
+            const modal = document.getElementById('ingredientsModal');
+            modal.style.display = 'none';
+            currentItemId = null;
+        }
+
+        // Fermer la modal au clic sur le fond
+        document.getElementById('ingredientsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeIngredientsModal();
+            }
+        });
+
+        // Gérer la soumission du formulaire
+        document.getElementById('ingredientsForm').addEventListener('submit', function(e) {
+            // Laisser le formulaire se soumettre naturellement
+            // e.preventDefault(); // Commenté - on laisse le POST se faire
+        });
+        
+        // Envoi vers WhatsApp (note optionnelle)
+        const waBtn = document.getElementById('waBtn');
+        if(waBtn){
+            waBtn.addEventListener('click', function(){
+                const note = document.getElementById('orderNote').value || '';
+                const base = "{% url 'whatsapp_cart' %}";
+                const url = base + (note ? ('?note=' + encodeURIComponent(note)) : '');
+                window.open(url, '_blank');
+            });
+        }
+
+        // Met à jour la quantité au changement
+        const panierTable = document.getElementById('panierTable');
+        if(panierTable) {
+            const qtyInputs = document.querySelectorAll('.qty');
+            qtyInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const form = this.closest('.qty-form');
+                    if(form) form.submit();
+                });
+            });
+        }
+
+        // Initialiser au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            initIngredientsData();
+        });
+
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Fermer le menu quand on clique sur un lien
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+{% include 'pwa_footer.html' %}
+</body>
+</html>

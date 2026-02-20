@@ -1,0 +1,12 @@
+# Requirements for Yara Express
+# Pin versions to known good releases; adjust as needed for your environment.
+Django==4.2.8
+Pillow==10.1.0
+gunicorn==20.1.0
+whitenoise==6.4.0
+
+# Optional (only if you use PostgreSQL in production)
+# psycopg2-binary==2.9.7
+
+# Optional helpers
+# python-dotenv==1.0.0  # load .env files locally
