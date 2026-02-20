@@ -5,7 +5,7 @@ gunicorn==21.2.0
 psycopg2-binary==2.9.11
 requests==2.31.0
 django-environ==0.13.0
-Pillow==10.1.0 --only-binary :all:
+Pillow==12.1.1 --only-binary :all:
 
 # Optional (only if you use PostgreSQL in production)
 # psycopg2-binary==2.9.7
