@@ -1,16 +1,5 @@
-# Requirements for Yara Express
-# Pin versions to known good releases; adjust as needed for your environment.
+# Requirements for Yara Express - PythonAnywhere Configuration
 Django==4.2.28
-gunicorn==21.2.0
-whitenoise==6.7.0
-psycopg2-binary==2.9.11
 requests==2.31.0
 django-environ==0.13.0
-dj-database-url==2.1.0
 Pillow==12.1.1 --only-binary :all:
-
-# Optional (only if you use PostgreSQL in production)
-# psycopg2-binary==2.9.7
-
-# Optional helpers
-# python-dotenv==1.0.0  # load .env files locally

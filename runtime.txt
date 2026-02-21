@@ -1,1 +1,2 @@
-Python 3.13.3
+# Runtime.txt is not needed for PythonAnywhere
+# Python version is configured directly in the PythonAnywhere web app settings
